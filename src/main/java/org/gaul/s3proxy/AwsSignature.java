@@ -23,6 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -154,7 +155,7 @@ final class AwsSignature {
         } catch (InvalidKeyException | NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        return BaseEncoding.base64().encode(mac.doFinal(
+        return Base64.getEncoder().encodeToString(mac.doFinal(
                 stringToSign.getBytes(StandardCharsets.UTF_8)));
     }
 

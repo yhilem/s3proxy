@@ -33,12 +33,14 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TimeZone;
@@ -57,7 +59,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -1663,7 +1664,7 @@ public class S3ProxyHandler {
         if (contentMD5String != null) {
             try {
                 contentMD5 = HashCode.fromBytes(
-                        BaseEncoding.base64().decode(contentMD5String));
+                        Base64.getDecoder().decode(contentMD5String));
             } catch (IllegalArgumentException iae) {
                 throw new S3Exception(S3ErrorCode.INVALID_DIGEST, iae);
             }
@@ -1864,7 +1865,7 @@ public class S3ProxyHandler {
                 return;
             }
         } else {
-            String expectedSignature = BaseEncoding.base64().encode(
+            String expectedSignature = Base64.getEncoder().encodeToString(
                     hmac("HmacSHA1", policy,
                             credential.getBytes(StandardCharsets.UTF_8)));
             if (!signature.equals(expectedSignature)) {
@@ -2355,7 +2356,7 @@ public class S3ProxyHandler {
         if (contentMD5String != null) {
             try {
                 contentMD5 = HashCode.fromBytes(
-                        BaseEncoding.base64().decode(contentMD5String));
+                        Base64.getDecoder().decode(contentMD5String));
             } catch (IllegalArgumentException iae) {
                 throw new S3Exception(S3ErrorCode.INVALID_DIGEST, iae);
             }
