@@ -68,6 +68,7 @@ public final class S3ProxyRule extends ExternalResource {
 
         private Builder() { }
 
+        @SuppressWarnings("InconsistentOverloads")
         public Builder withCredentials(AuthenticationType authType,
                 String accessKey, String secretKey) {
             this.authType = authType;
