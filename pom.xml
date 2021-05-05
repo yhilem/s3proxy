@@ -115,7 +115,7 @@
             <path>
               <groupId>com.google.errorprone</groupId>
               <artifactId>error_prone_core</artifactId>
-              <version>2.5.1</version>
+              <version>2.6.0</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
@@ -356,7 +356,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.1</version>
       <!-- Required for S3ProxyRule -->
       <scope>provided</scope>
     </dependency>
