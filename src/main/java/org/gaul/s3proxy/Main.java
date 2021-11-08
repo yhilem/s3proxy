@@ -23,10 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -103,6 +107,10 @@ public final class Main {
                 1, 20, 60 * 1000, factory);
         ImmutableMap.Builder<String, Map.Entry<String, BlobStore>> locators =
                 ImmutableMap.builder();
+        ImmutableMap.Builder<PathMatcher, Map.Entry<String, BlobStore>>
+                globLocators = ImmutableMap.builder();
+        Set<String> locatorGlobs = new HashSet<>();
+        Set<String> parsedIdentities = new HashSet<>();
         for (File propertiesFile : options.propertiesFiles) {
             Properties properties = new Properties();
             try (InputStream is = new FileInputStream(propertiesFile)) {
@@ -117,14 +125,33 @@ public final class Main {
 
             String s3ProxyAuthorizationString = properties.getProperty(
                     S3ProxyConstants.PROPERTY_AUTHORIZATION);
+
+            String localIdentity = null;
             if (AuthenticationType.fromString(s3ProxyAuthorizationString) !=
                     AuthenticationType.NONE) {
-                String localIdentity = properties.getProperty(
+                localIdentity = properties.getProperty(
                         S3ProxyConstants.PROPERTY_IDENTITY);
                 String localCredential = properties.getProperty(
                         S3ProxyConstants.PROPERTY_CREDENTIAL);
-                locators.put(localIdentity, Maps.immutableEntry(
-                        localCredential, blobStore));
+                if (parsedIdentities.add(localIdentity)) {
+                    locators.put(localIdentity,
+                            Maps.immutableEntry(localCredential, blobStore));
+                }
+            }
+            for (String key : properties.stringPropertyNames()) {
+                if (key.startsWith(S3ProxyConstants.PROPERTY_BUCKET_LOCATOR)) {
+                    String bucketLocator = properties.getProperty(key);
+                    if (locatorGlobs.add(bucketLocator)) {
+                        globLocators.put(
+                                FileSystems.getDefault().getPathMatcher(
+                                        "glob:" + bucketLocator),
+                                Maps.immutableEntry(localIdentity, blobStore));
+                    } else {
+                        System.err.println("Multiple definitions of the " +
+                                "bucket locator: " + bucketLocator);
+                        System.exit(1);
+                    }
+                }
             }
 
             S3Proxy.Builder s3ProxyBuilder2 = S3Proxy.Builder
@@ -151,23 +178,11 @@ public final class Main {
 
         final Map<String, Map.Entry<String, BlobStore>> locator =
                 locators.build();
-        if (!locator.isEmpty()) {
-            s3Proxy.setBlobStoreLocator(new BlobStoreLocator() {
-                @Override
-                public Map.Entry<String, BlobStore> locateBlobStore(
-                        String identity, String container, String blob) {
-                    if (identity == null) {
-                        if (locator.size() == 1) {
-                            return locator.entrySet().iterator().next()
-                                    .getValue();
-                        }
-                        throw new IllegalArgumentException(
-                            "cannot use anonymous access with multiple" +
-                            " backends");
-                    }
-                    return locator.get(identity);
-                }
-            });
+        final Map<PathMatcher, Map.Entry<String, BlobStore>>
+                globLocator = globLocators.build();
+        if (!locator.isEmpty() || !globLocator.isEmpty()) {
+            s3Proxy.setBlobStoreLocator(
+                    new GlobBlobStoreLocator(locator, globLocator));
         }
 
         try {

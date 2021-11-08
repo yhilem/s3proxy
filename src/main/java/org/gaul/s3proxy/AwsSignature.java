@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.crypto.Mac;
@@ -77,6 +78,7 @@ final class AwsSignature {
             "versions",
             "website"
     );
+    private static final Pattern REPEATING_WHITESPACE = Pattern.compile("\\s+");
 
     private AwsSignature() { }
 
@@ -210,29 +212,40 @@ final class AwsSignature {
 
     private static String buildCanonicalHeaders(HttpServletRequest request,
             List<String> signedHeaders) {
-        List<String> headers = new ArrayList<>();
+        List<String> headers = new ArrayList<>(
+                /*initialCapacity=*/ signedHeaders.size());
         for (String header : signedHeaders) {
             headers.add(header.toLowerCase());
         }
         Collections.sort(headers);
-        List<String> headersWithValues = new ArrayList<>();
+
+        StringBuilder headersWithValues = new StringBuilder();
+        boolean firstHeader = true;
         for (String header : headers) {
-            List<String> values = new ArrayList<>();
-            StringBuilder headerWithValue = new StringBuilder();
-            headerWithValue.append(header);
-            headerWithValue.append(":");
+            if (firstHeader) {
+                firstHeader = false;
+            } else {
+                headersWithValues.append('\n');
+            }
+            headersWithValues.append(header);
+            headersWithValues.append(':');
+
+            boolean firstValue = true;
             for (String value : Collections.list(request.getHeaders(header))) {
+                if (firstValue) {
+                    firstValue = false;
+                } else {
+                    headersWithValues.append(',');
+                }
                 value = value.trim();
                 if (!value.startsWith("\"")) {
-                    value = value.replaceAll("\\s+", " ");
+                    value = REPEATING_WHITESPACE.matcher(value).replaceAll(" ");
                 }
-                values.add(value);
+                headersWithValues.append(value);
             }
-            headerWithValue.append(Joiner.on(",").join(values));
-            headersWithValues.add(headerWithValue.toString());
         }
 
-        return Joiner.on("\n").join(headersWithValues);
+        return headersWithValues.toString();
     }
 
     private static String buildCanonicalQueryString(HttpServletRequest request)
