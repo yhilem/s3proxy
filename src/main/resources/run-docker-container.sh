@@ -15,6 +15,7 @@ exec java \
     -Ds3proxy.encrypted-blobstore="${S3PROXY_ENCRYPTED_BLOBSTORE}" \
     -Ds3proxy.encrypted-blobstore-password="${S3PROXY_ENCRYPTED_BLOBSTORE_PASSWORD}" \
     -Ds3proxy.encrypted-blobstore-salt="${S3PROXY_ENCRYPTED_BLOBSTORE_SALT}" \
+    -Ds3proxy.v4-max-non-chunked-request-size="${S3PROXY_V4_MAX_NON_CHUNKED_REQ_SIZE}" \
     -Djclouds.provider="${JCLOUDS_PROVIDER}" \
     -Djclouds.identity="${JCLOUDS_IDENTITY}" \
     -Djclouds.credential="${JCLOUDS_CREDENTIAL}" \
@@ -25,5 +26,8 @@ exec java \
     -Djclouds.keystone.scope="${JCLOUDS_KEYSTONE_SCOPE}" \
     -Djclouds.keystone.project-domain-name="${JCLOUDS_KEYSTONE_PROJECT_DOMAIN_NAME}" \
     -Djclouds.filesystem.basedir="${JCLOUDS_FILESYSTEM_BASEDIR}" \
+    -Djclouds.azureblob.tenantId="${JCLOUDS_AZUREBLOB_TENANTID}" \
+    -Djclouds.azureblob.auth="${JCLOUDS_AZUREBLOB_AUTH}" \
+    -Djclouds.azureblob.account="${JCLOUDS_AZUREBLOB_ACCOUNT}" \
     -jar /opt/s3proxy/s3proxy \
     --properties /dev/null

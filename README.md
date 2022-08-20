@@ -23,7 +23,8 @@ and has instructions on how to run it.
 
 Users can [download releases](https://github.com/gaul/s3proxy/releases)
 from GitHub.  Developers can build the project by running `mvn package` which
-produces a binary at `target/s3proxy`.  S3Proxy requires Java 8 or newer to run.
+produces a binary at `target/s3proxy`.  S3Proxy requires Java 11 or newer to
+run.
 
 Configure S3Proxy via a properties file.  An example using the local
 file system as the storage backend with anonymous access:
@@ -154,12 +155,12 @@ for specific storage backends.
 
 * [Apache jclouds](https://jclouds.apache.org/) provides storage backend support for S3Proxy
 * [Ceph s3-tests](https://github.com/ceph/s3-tests) help maintain and improve compatibility with the S3 API
-* [fake-s3](https://github.com/jubos/fake-s3), [gofakes3](https://github.com/johannesboyne/gofakes3), [S3 ninja](https://github.com/scireum/s3ninja), and [s3rver](https://github.com/jamhall/s3rver) provide functionality similar to S3Proxy when using the filesystem backend
+* [fake-s3](https://github.com/jubos/fake-s3), [gofakes3](https://github.com/johannesboyne/gofakes3), [minio](https://github.com/minio/minio), [S3 ninja](https://github.com/scireum/s3ninja), and [s3rver](https://github.com/jamhall/s3rver) provide functionality similar to S3Proxy when using the filesystem backend
 * [GlacierProxy](https://github.com/bouncestorage/glacier-proxy) and [SwiftProxy](https://github.com/bouncestorage/swiftproxy) provide similar functionality for the Amazon Glacier and OpenStack Swift APIs
-* [minio](https://github.com/minio/minio) and [Zenko](https://www.zenko.io/) provide similar multi-cloud functionality
 * [s3mock](https://github.com/findify/s3mock) mocks the S3 API for Java/Scala projects
 * [sbt-s3](https://github.com/localytics/sbt-s3) runs S3Proxy via the Scala Build Tool
 * [swift3](https://github.com/openstack/swift3) provides an S3 middleware for OpenStack Swift
+* [Zenko](https://www.zenko.io/) provide similar multi-cloud functionality
 
 ## License
 
