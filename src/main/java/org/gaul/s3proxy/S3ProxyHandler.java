@@ -163,6 +163,7 @@ public class S3ProxyHandler {
     /** All supported x-amz- headers, except for x-amz-meta- user metadata. */
     private static final Set<String> SUPPORTED_X_AMZ_HEADERS = ImmutableSet.of(
             AwsHttpHeaders.ACL,
+            AwsHttpHeaders.API_VERSION,
             AwsHttpHeaders.CONTENT_SHA256,
             AwsHttpHeaders.COPY_SOURCE,
             AwsHttpHeaders.COPY_SOURCE_IF_MATCH,
@@ -1490,7 +1491,7 @@ public class S3ProxyHandler {
                     StorageMetadata sm = Streams.findLast(set.stream()).orElse(null);
                     if (sm != null) {
                         lastKeyToMarker.put(Maps.immutableEntry(containerName,
-                                sm.getName()), nextMarker);
+                                encodeBlob(encodingType, nextMarker)), nextMarker);
                     }
                 }
             } else {

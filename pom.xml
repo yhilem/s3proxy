@@ -100,7 +100,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-install-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +172,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -362,9 +362,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>11</java.version>
     <jclouds.version>2.6.0-SNAPSHOT</jclouds.version>
-    <slf4j.version>2.0.6</slf4j.version>
+    <slf4j.version>2.0.7</slf4j.version>
     <shade.prefix>${project.groupId}.shaded</shade.prefix>
-    <surefire.version>3.0.0-M9</surefire.version>
+    <surefire.version>3.0.0</surefire.version>
   </properties>
 
   <repositories>
@@ -398,7 +398,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.5</version>
+      <version>1.4.8</version>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>
@@ -470,7 +470,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>11.0.14</version>
+      <version>11.0.15</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
