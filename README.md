@@ -107,6 +107,7 @@ S3Proxy can modify its behavior based on middlewares:
 * [large object mocking](https://github.com/gaul/s3proxy/wiki/Middleware-large-object-mocking)
 * [read-only](https://github.com/gaul/s3proxy/wiki/Middleware-read-only)
 * [sharded backend containers](https://github.com/gaul/s3proxy/wiki/Middleware-sharded-backend)
+* [regex rename blobs](https://github.com/gaul/s3proxy/wiki/Middleware-regex)
 
 ## SSL Support
 
@@ -144,7 +145,7 @@ s3proxy.cors-allow-credential=true
 ```
 
 CORS cannot be configured per bucket. `s3proxy.cors-allow-all=true` will accept any origin and header.
-Actual CORS requests are supported for GET, PUT and POST methods.
+Actual CORS requests are supported for GET, PUT, POST, HEAD and DELETE methods.
 
 The wiki collects
 [compatibility notes](https://github.com/gaul/s3proxy/wiki/Storage-backend-compatibility)
