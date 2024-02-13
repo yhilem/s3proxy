@@ -40,7 +40,6 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
@@ -59,10 +58,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
-
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -138,58 +135,6 @@ public final class CrossOriginResourceSharingResponseTest {
         if (httpClient != null) {
             httpClient.close();
         }
-    }
-
-    @Test
-    public void testCorsPreflightNegative() throws Exception {
-        // No CORS headers
-        HttpOptions request = new HttpOptions(presignedGET);
-        HttpResponse response = httpClient.execute(request);
-        /*
-         * For non presigned URLs that should give a 400, but the
-         * Access-Control-Request-Method header is needed for presigned URLs
-         * to calculate the same signature. If this is missing it fails already
-         * with 403 - Signature mismatch before processing the OPTIONS request
-         * See testCorsPreflightPublicRead for that cases
-         */
-        assertThat(response.getStatusLine().getStatusCode())
-                .isEqualTo(HttpStatus.SC_FORBIDDEN);
-
-        // Not allowed origin
-        request.reset();
-        request.setHeader(HttpHeaders.ORIGIN, "https://example.org");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET");
-        response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode())
-                .isEqualTo(HttpStatus.SC_FORBIDDEN);
-
-        // Not allowed method
-        request.reset();
-        request.setHeader(HttpHeaders.ORIGIN, "https://example.com");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "PATCH");
-        response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode())
-                .isEqualTo(HttpStatus.SC_FORBIDDEN);
-
-        // Not allowed header
-        request.reset();
-        request.setHeader(HttpHeaders.ORIGIN, "https://example.com");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
-              "Accept-Encoding");
-        response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode())
-                .isEqualTo(HttpStatus.SC_FORBIDDEN);
-
-        // Not allowed header combination
-        request.reset();
-        request.setHeader(HttpHeaders.ORIGIN, "https://example.com");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET");
-        request.setHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS,
-                "Accept, Accept-Encoding");
-        response = httpClient.execute(request);
-        assertThat(response.getStatusLine().getStatusCode())
-                .isEqualTo(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test

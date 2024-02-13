@@ -125,8 +125,7 @@
           <headerLocation>src/main/resources/copyright_header.txt</headerLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <violationSeverity>warning</violationSeverity>
-          <!-- TODO: remove once source fixed -->
-          <failOnViolation>false</failOnViolation>
+          <failOnViolation>true</failOnViolation>
         </configuration>
         <dependencies>
           <dependency>
@@ -298,7 +297,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.3.0</version>
+        <version>4.8.3.0</version>
         <configuration>
           <effort>Max</effort>
           <omitVisitors>CrossSiteScripting,DefaultEncodingDetector,FindNullDeref</omitVisitors>
@@ -314,8 +313,9 @@
       <plugin>
         <groupId>org.skife.maven</groupId>
         <artifactId>really-executable-jar-maven-plugin</artifactId>
-        <version>1.5.0</version>
+        <version>2.1.1</version>
         <configuration>
+          <inputFile>target/s3proxy-${version}-jar-with-dependencies.jar</inputFile>
           <programFile>s3proxy</programFile>
         </configuration>
         <executions>
@@ -330,7 +330,7 @@
       <plugin>
         <groupId>org.gaul</groupId>
         <artifactId>modernizer-maven-plugin</artifactId>
-        <version>2.6.0</version>
+        <version>2.7.0</version>
         <executions>
           <execution>
             <id>modernizer</id>
@@ -362,8 +362,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>11</java.version>
     <jclouds.version>2.5.0</jclouds.version>
-    <jetty.version>11.0.18</jetty.version>
-    <slf4j.version>2.0.9</slf4j.version>
+    <jetty.version>11.0.20</jetty.version>
+    <slf4j.version>2.0.11</slf4j.version>
     <shade.prefix>${project.groupId}.shaded</shade.prefix>
     <surefire.version>3.0.0</surefire.version>
   </properties>
@@ -428,7 +428,7 @@
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
-      <version>4.7.1</version>
+      <version>4.8.3</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
