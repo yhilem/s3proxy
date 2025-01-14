@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 Andrew Gaul <andrew@gaul.org>
+ * Copyright 2014-2024 Andrew Gaul <andrew@gaul.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.s3.blobstore.integration.S3ContainerIntegrationLiveTest;
 import org.jclouds.s3.reference.S3Constants;
 import org.testng.SkipException;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
 @Test(testName = "JcloudsS3ContainerIntegrationLiveTest")
@@ -41,10 +41,11 @@ public final class JcloudsS3ContainerIntegrationLiveTest
     private BlobStoreContext context;
     private String blobStoreType;
 
-    @AfterClass
-    public void tearDown() throws Exception {
-        s3Proxy.stop();
+    @AfterSuite
+    @Override
+    public void destroyResources() throws Exception {
         context.close();
+        s3Proxy.stop();
     }
 
     @Override
@@ -57,7 +58,8 @@ public final class JcloudsS3ContainerIntegrationLiveTest
     protected Properties setupProperties() {
         TestUtils.S3ProxyLaunchInfo info;
         try {
-            info = TestUtils.startS3Proxy("s3proxy.conf");
+            info = TestUtils.startS3Proxy(
+                    System.getProperty("s3proxy.test.conf", "s3proxy.conf"));
             s3Proxy = info.getS3Proxy();
             context = info.getBlobStore().getContext();
             blobStoreType = context.unwrap().getProviderMetadata().getId();

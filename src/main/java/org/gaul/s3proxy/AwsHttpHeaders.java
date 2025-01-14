@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 Andrew Gaul <andrew@gaul.org>
+ * Copyright 2014-2024 Andrew Gaul <andrew@gaul.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ final class AwsHttpHeaders {
     static final String METADATA_DIRECTIVE = "x-amz-metadata-directive";
     static final String REQUEST_ID = "x-amz-request-id";
     static final String STORAGE_CLASS = "x-amz-storage-class";
+    static final String TRANSFER_ENCODING = "x-amz-te";
+    static final String USER_AGENT = "x-amz-user-agent";
 
     private AwsHttpHeaders() {
         throw new AssertionError("intentionally unimplemented");

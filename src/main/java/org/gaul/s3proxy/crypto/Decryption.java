@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 Andrew Gaul <andrew@gaul.org>
+ * Copyright 2014-2024 Andrew Gaul <andrew@gaul.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -63,7 +62,7 @@ public class Decryption {
         }
 
         // get the 64 byte of part padding from the end of the blob
-        GetOptions options = new GetOptions();
+        var options = new GetOptions();
         options.range(meta.getSize() - Constants.PADDING_BLOCK_SIZE,
             meta.getSize());
         Blob blob =
@@ -137,8 +136,8 @@ public class Decryption {
         // calculate the offset
         calculateOffset(offset);
 
-        // if there is a offset and a length set the output length
-        if (offset > 0 && length == 0) {
+        // if there is a offset and no length set the output length
+        if (offset > 0 && length <= 0) {
             outputLength = unencryptedSize - offset;
         }
     }
@@ -173,9 +172,7 @@ public class Decryption {
             int partCounter = 1;
 
             // we need the map in reversed order
-            for (Map.Entry<Integer, PartPadding> part : partList.descendingMap()
-                .entrySet()) {
-
+            for (var part : partList.descendingMap().entrySet()) {
                 // check the parts that are between offset and end
                 plaintextSize = plaintextSize + part.getValue().getSize();
                 if (endAt > plaintextSize) {
@@ -234,9 +231,7 @@ public class Decryption {
             long partStartAt = 0;
 
             // we need the map in reversed order
-            for (Map.Entry<Integer, PartPadding> part : partList.descendingMap()
-                .entrySet()) {
-
+            for (var part : partList.descendingMap().entrySet()) {
                 // compute the plaintext size of the current part
                 plaintextSize = plaintextSize + part.getValue().getSize();
 
