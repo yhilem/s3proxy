@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2024 Andrew Gaul <andrew@gaul.org>
+ * Copyright 2014-2025 Andrew Gaul <andrew@gaul.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1714,6 +1714,70 @@ public final class AwsSdkTest {
             Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
         } catch (AmazonS3Exception e) {
             assertThat(e.getErrorCode()).isEqualTo("InvalidAccessKeyId");
+        }
+    }
+
+    @Test
+    public void testCopyRelativePath() throws Exception {
+        assumeTrue(!blobStoreType.equals("azureblob-sdk"));
+        try {
+            client.copyObject(new CopyObjectRequest(
+                    containerName, "../evil.txt", containerName, "good.txt"));
+            Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
+        } catch (AmazonS3Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testDeleteRelativePath() throws Exception {
+        try {
+            client.deleteObject(containerName, "../evil.txt");
+            if (blobStoreType.equals("filesystem") || blobStoreType.equals("filesystem-nio2") || blobStoreType.equals("transient-nio2")) {
+                Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
+            }
+        } catch (AmazonS3Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testGetRelativePath() throws Exception {
+        try {
+            client.getObject(containerName, "../evil.txt");
+            Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
+        } catch (AmazonS3Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testPutRelativePath() throws Exception {
+        try {
+            var metadata = new ObjectMetadata();
+            metadata.setContentLength(BYTE_SOURCE.size());
+            PutObjectResult result = client.putObject(containerName, "../evil.txt",
+                    BYTE_SOURCE.openStream(), metadata);
+            if (blobStoreType.equals("filesystem") || blobStoreType.equals("filesystem-nio2") || blobStoreType.equals("transient-nio2")) {
+                Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
+            }
+        } catch (AmazonS3Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testListRelativePath() throws Exception {
+        assumeTrue(!blobStoreType.equals("filesystem"));
+        try {
+            client.listObjects(new ListObjectsRequest()
+                    .withBucketName(containerName)
+                    .withPrefix("../evil/"));
+            if (blobStoreType.equals("filesystem") || blobStoreType.equals("filesystem-nio2") || blobStoreType.equals("transient-nio2")) {
+                Fail.failBecauseExceptionWasNotThrown(AmazonS3Exception.class);
+            }
+        } catch (AmazonS3Exception e) {
+            // expected
         }
     }
 

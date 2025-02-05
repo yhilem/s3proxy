@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2024 Andrew Gaul <andrew@gaul.org>
+ * Copyright 2014-2025 Andrew Gaul <andrew@gaul.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,6 +125,9 @@ public final class Main {
             properties.putAll(System.getProperties());
 
             BlobStore blobStore = createBlobStore(properties, executorService);
+            if (blobStore.getContext().unwrap().getProviderMetadata().getId().equals("filesystem")) {
+                logger.warn("filesystem storage backend deprecated -- please use filesystem-nio2 instead");
+            }
 
             blobStore = parseMiddlewareProperties(blobStore, executorService,
                     properties);

@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
       - name: Docker meta
         id: docker_action_meta
-        uses: docker/metadata-action@v4.0.1
+        uses: docker/metadata-action@v5.6.1
         with:
           images: |
             name=ghcr.io/${{ github.repository }}/container
@@ -59,7 +59,7 @@ jobs:
           distribution: "temurin"
           java-version: "11"
           cache: "maven"
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -152,7 +152,7 @@ jobs:
           name: pom
           path: .
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -172,7 +172,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
