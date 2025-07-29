@@ -131,14 +131,14 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>10.23.1</version>
+            <version>10.26.1</version>
           </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -225,7 +225,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.7.1</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/jar-with-dependencies.xml</descriptor>
@@ -364,7 +364,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>11</java.version>
-    <aws-sdk.version>1.12.783</aws-sdk.version>
+    <aws-sdk.version>1.12.787</aws-sdk.version>
     <jclouds.version>2.7.0</jclouds.version>
     <jetty.version>11.0.25</jetty.version>
     <modernizer.version>3.1.0</modernizer.version>
@@ -429,7 +429,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>33.4.0-jre</version>
+      <version>33.4.8-jre</version>
     </dependency>
     <dependency>
       <groupId>com.google.jimfs</groupId>
@@ -458,7 +458,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-xml</artifactId>
-      <version>2.18.2</version>
+      <version>2.19.1</version>
     </dependency>
     <dependency>
       <groupId>com.github.spotbugs</groupId>
