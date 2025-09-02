@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
       - name: Docker meta
         id: docker_action_meta
-        uses: docker/metadata-action@v5.7.0
+        uses: docker/metadata-action@v5.8.0
         with:
           images: |
             name=ghcr.io/${{ github.repository }}/container
@@ -98,7 +98,7 @@ jobs:
 
       - name: Install Minio
         run: |
-          curl -o minio https://dl.min.io/server/minio/release/linux-$(uname -m | sed -e s/aarch64/arm64/ -e s/x86_64/amd64/)/minio
+          curl --fail --silent --output minio https://dl.min.io/server/minio/release/linux-$(uname -m | sed -e s/aarch64/arm64/ -e s/x86_64/amd64/)/minio
           chmod +x minio
       - name: Start Minio
         run: |

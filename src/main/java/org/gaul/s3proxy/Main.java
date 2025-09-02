@@ -307,6 +307,21 @@ public final class Main {
                             blobStore, fromChars, toChars);
         }
 
+        Map<String, Long> latencies = LatencyBlobStore.parseLatencies(properties);
+        Map<String, Long> speeds = LatencyBlobStore.parseSpeeds(properties);
+        if (!latencies.isEmpty() || !speeds.isEmpty()) {
+            System.err.println("Using latency storage backend");
+            blobStore = LatencyBlobStore.newLatencyBlobStore(blobStore, latencies, speeds);
+        }
+
+        String noCacheBlobStore = properties.getProperty(
+              S3ProxyConstants.PROPERTY_NO_CACHE_BLOBSTORE);
+        if  ("true".equalsIgnoreCase(noCacheBlobStore)) {
+            System.err.println("Using no-cache storage backend middleware");
+            blobStore = NoCacheBlobStore
+                    .newNoCacheBlobStore(blobStore);
+        }
+
         return blobStore;
     }
 
