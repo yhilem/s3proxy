@@ -24,7 +24,7 @@ jobs:
       container_revision: ${{ fromJSON(steps.docker_action_meta.outputs.json).labels['org.opencontainers.image.revision'] }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: false
           persist-credentials: false
@@ -50,16 +50,16 @@ jobs:
     runs-on: ubuntu-24.04-arm
     needs: [meta]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: "recursive"
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: "11"
           cache: "maven"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -87,10 +87,10 @@ jobs:
           mvn test -Ds3proxy.test.conf=s3proxy-filesystem-nio2.conf -Dtest=AwsSdkTest
 
       - name: Install Azurite
-        run: npx --yes --loglevel info azurite@3.34 --version
+        run: npx --yes --loglevel info azurite@3.35 --version
       - name: Start Azurite
         shell: bash
-        run: npx --yes azurite@3.34 azurite-blob &
+        run: npx --yes azurite@3.35 azurite-blob &
       - name: Maven Test with Azurite
         run: |
           # TODO: run other test classes
@@ -142,12 +142,12 @@ jobs:
     runs-on: ubuntu-24.04-arm
     needs: [runTests, meta]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           name: s3proxy
           path: target
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: pom
           path: .
