@@ -1,4 +1,5 @@
 name: Main CI
+
 on:
   push:
     branches:
@@ -57,7 +58,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: "temurin"
-          java-version: "11"
+          java-version: "17"
           cache: "maven"
       - uses: actions/setup-python@v6
         with:
@@ -70,7 +71,7 @@ jobs:
           mvn versions:set -DnewVersion=${{ needs.meta.outputs.version }}
       - name: Maven Package
         run: |
-          mvn package verify -DskipTests
+          mvn verify -DskipTests
       - name: Maven Test
         run: |
           mvn test
@@ -129,11 +130,11 @@ jobs:
           kill $(pidof minio)
 
       #Store the target
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: s3proxy
           path: target/s3proxy
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: pom
           path: pom.xml
@@ -143,11 +144,11 @@ jobs:
     needs: [runTests, meta]
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: s3proxy
           path: target
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: pom
           path: .

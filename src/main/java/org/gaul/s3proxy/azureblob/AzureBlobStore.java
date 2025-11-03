@@ -66,6 +66,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.core.Response.Status;
 
+import org.gaul.s3proxy.PutOptions2;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -224,11 +225,11 @@ public final class AzureBlobStore extends BaseBlobStore {
             var response = blobServiceClient
                     .createBlobContainerIfNotExistsWithResponse(
                             container, azureOptions, /*context=*/ null);
-            switch (response.getStatusCode()) {
-            case 201: return true;
-            case 409: return false;
-            default: return false;
-            }
+            return switch (response.getStatusCode()) {
+            case 201 -> true;
+            case 409 -> false;
+            default -> false;
+            };
         } catch (BlobStorageException bse) {
             translateAndRethrowException(bse, container, /*key=*/ null);
             throw bse;
@@ -395,6 +396,17 @@ public final class AzureBlobStore extends BaseBlobStore {
                         blob.getMetadata().getTier()));
             }
 
+            if (options instanceof PutOptions2) {
+                var putOptions2 = (PutOptions2) options;
+                String ifMatch = putOptions2.getIfMatch();
+                String ifNoneMatch = putOptions2.getIfNoneMatch();
+                if (ifMatch != null || ifNoneMatch != null) {
+                    azureOptions.setRequestConditions(new BlobRequestConditions()
+                            .setIfMatch(ifMatch)
+                            .setIfNoneMatch(ifNoneMatch));
+                }
+            }
+
             try (var os = client.getBlobOutputStream(
                     azureOptions, /*context=*/ null)) {
                 is.transferTo(os);
@@ -502,6 +514,9 @@ public final class AzureBlobStore extends BaseBlobStore {
         try {
             properties = client.getProperties();
         } catch (BlobStorageException bse) {
+            if (bse.getErrorCode().equals(BlobErrorCode.BLOB_NOT_FOUND)) {
+                return null;
+            }
             translateAndRethrowException(bse, container, /*key=*/ null);
             throw bse;
         }
@@ -680,17 +695,13 @@ public final class AzureBlobStore extends BaseBlobStore {
     }
 
     private static AccessTier toAccessTier(Tier tier) {
-        switch (tier) {
-        case ARCHIVE:
-            return AccessTier.ARCHIVE;
-        case COOL:
-            return AccessTier.COOL;
-        case COLD:
-            return AccessTier.COLD;
-        case STANDARD:
-        default:
-            return AccessTier.HOT;
-        }
+        return switch (tier) {
+        case ARCHIVE -> AccessTier.ARCHIVE;
+        case COOL -> AccessTier.COOL;
+        case INFREQUENT -> AccessTier.COOL;
+        case COLD -> AccessTier.COLD;
+        case STANDARD -> AccessTier.HOT;
+        };
     }
 
     private static Tier toTier(AccessTier tier) {
@@ -743,6 +754,16 @@ public final class AzureBlobStore extends BaseBlobStore {
         } else if (code.equals(BlobErrorCode.CONDITION_NOT_MET)) {
             var request = HttpRequest.builder()
                     .method("GET")
+                    .endpoint(endpoint)
+                    .build();
+            var response = HttpResponse.builder()
+                    .statusCode(Status.PRECONDITION_FAILED.getStatusCode())
+                    .build();
+            throw new HttpResponseException(
+                    new HttpCommand(request), response, bse);
+        } else if (code.equals(BlobErrorCode.BLOB_ALREADY_EXISTS)) {
+            var request = HttpRequest.builder()
+                    .method("PUT")
                     .endpoint(endpoint)
                     .build();
             var response = HttpResponse.builder()
